@@ -29,6 +29,7 @@ import           Data.Text.Lazy               (Text)
 import qualified Data.Text.Lazy               as T
 import           Data.Time                    (FormatTime ())
 import qualified Data.Time                    as Time
+import           Data.Time.Locale.Compat      (defaultTimeLocale)
 import qualified Data.Version                 as Ver
 import qualified Network.URI                  as URI
 import           Prelude                      hiding (mapM_)
@@ -967,6 +968,6 @@ line :: ByteString -> ContentPrinter ()
 line b = tell (Bu.lazyByteString b) >> newline
 
 formatTime :: FormatTime t => String -> t -> String
-formatTime = Time.formatTime L.defaultTimeLocale
+formatTime = Time.formatTime defaultTimeLocale
 
 -- }}}

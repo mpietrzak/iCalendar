@@ -26,6 +26,7 @@ import qualified Data.Text.Lazy.Encoding      as TE
 import           Data.Time                    (Day, LocalTime (LocalTime),
                                                TimeOfDay (), UTCTime (UTCTime))
 import qualified Data.Time                    as Time
+import           Data.Time.Locale.Compat      (defaultTimeLocale)
 import           Data.Traversable             (mapM)
 import qualified Network.URI                  as URI
 import           Prelude                      hiding (mapM)
@@ -74,7 +75,7 @@ parseText' bs = do c <- asks dfBS2Text
                                        '\\' -> nxt '\\'
                                        ';' -> nxt ';'
                                        ',' -> nxt ','
-                                       z | z `elem` "nN" -> nxt '\n'
+                                       z | z `elem` ("nN"::String) -> nxt '\n'
                                        _ -> fail $ "unexpected " ++ show x
                        y -> nxt y
         -- isTSafe + 0x22, 0x3A, and 0x5C is pattern matched against.
@@ -115,12 +116,12 @@ parseDateTime mTZ bs = do
 
 -- | Parse a string to a Day. 3.3.4
 parseDateStr :: String -> Maybe (Day, String)
-parseDateStr = lastToMaybe . Time.readsTime L.defaultTimeLocale "%Y%m%d"
+parseDateStr = lastToMaybe . Time.readsTime defaultTimeLocale "%Y%m%d"
 
 -- | Parse a string to a TimeOfDay, and a bool if it's in UTC.
 parseTimeStr :: String -> Maybe (TimeOfDay, Bool)
 parseTimeStr s = do
-    (t, r) <- lastToMaybe (Time.readsTime L.defaultTimeLocale "%H%M%S" s)
+    (t, r) <- lastToMaybe (Time.readsTime defaultTimeLocale "%H%M%S" s)
     case r of
          "Z" -> return (t, True)
          "" -> return (t, False)
